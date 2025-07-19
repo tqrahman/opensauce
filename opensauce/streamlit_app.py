@@ -19,7 +19,7 @@ from streamlit_autorefresh import st_autorefresh
 # API parameters
 
 papaduck = "OPNSAUCE" # Enter your own papaduck
-start_time = 1752901902 # Put start date
+start_time = 1752904982 # Put start date
 end_time = 1846010000 # Put end date
 token = {
     "token_timer": datetime.datetime.now().timestamp(),
@@ -97,7 +97,7 @@ def get_token(credentials):
 
 create_api_query(papaduck, start_time, end_time)
 
-api_query = "https://beta.owldms.com/owl/api/userdata/getrawdata?start=1746056137&end=1846010000&papaId=OPNSAUCE"
+api_query = "https://beta.owldms.com/owl/api/userdata/getrawdata?start=1752904982&end=1846010000&papaId=OPNSAUCE"
 
 
 # Function to convert payload string into a dict
