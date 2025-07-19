@@ -23,7 +23,7 @@ start_time = 1752901902 # Put start date
 end_time = 1846010000 # Put end date
 token = {
     "token_timer": datetime.datetime.now().timestamp(),
-    "token_header": None
+    "token_header": {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjkyNSIsIm5iZiI6MTc1MjkwNDgzNSwiZXhwIjoxNzUyOTkxMjM1LCJpYXQiOjE3NTI5MDQ4MzV9.tyhwuvPWNHNdAd8N2VCVJVB0OghSyfoSxGPlrsOjp-4'}
 }
 
 credentials = {
@@ -99,7 +99,6 @@ create_api_query(papaduck, start_time, end_time)
 
 api_query = "https://beta.owldms.com/owl/api/userdata/getrawdata?start=1746056137&end=1846010000&papaId=OPNSAUCE"
 
-token_header = token["token_header"]
 
 # Function to convert payload string into a dict
 def parse_payload(payload):
