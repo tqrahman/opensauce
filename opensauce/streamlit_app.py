@@ -21,7 +21,11 @@ from streamlit_autorefresh import st_autorefresh
 papaduck = "OPNSAUCE" # Enter your own papaduck
 start_time = 1752901902 # Put start date
 end_time = 1846010000 # Put end date
-token_timer = datetime.datetime.now().timestamp()
+token = {
+    "token_timer": datetime.datetime.now().timestamp(),
+    "token_header": None
+}
+
 credentials = {
     "username": "uconnteam42@gmail.com", # Enter your own username
     "password": "Papaduck@42"  # Enter your own password
@@ -81,17 +85,12 @@ def get_token(credentials):
     
     # Getting the token
     post = requests.post("https://beta.owldms.com/owl/api/users/authenticate", json=credentials)
-    
-    # Creating the header token
-    global token_header
-    token_header = {
+
+    token["token_header"] = {
         'Authorization':'Bearer '+post.json()["token"]
     }
 
-    global token_timer
-    token_timer = datetime.datetime.now().timestamp()
-
-    print("Token: ", token_header)
+    token["token_timer"] = datetime.datetime.now().timestamp()
 
     # return token_header
 
@@ -100,7 +99,7 @@ create_api_query(papaduck, start_time, end_time)
 
 api_query = "https://beta.owldms.com/owl/api/userdata/getrawdata?start=1746056137&end=1846010000&papaId=OPNSAUCE"
 
-token_header = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjEwMyIsIm5iZiI6MTc1MjgwOTU1NiwiZXhwIjoxNzUyODk1OTU2LCJpYXQiOjE3NTI4MDk1NTZ9.In0w1EPv6zGKjqi-zeKZpPylVeVrrjDIMl-_AmhLAg0'}
+token_header = token["token_header"]
 
 # Function to convert payload string into a dict
 def parse_payload(payload):
@@ -176,10 +175,9 @@ def fill_in_coordinate(list_of_incoming_message):
 
 def get_api_data():
     try:
-        if datetime.datetime.now().timestamp() - token_timer >= 86400:
-            global token_header
-            token_header = get_token(credentials)
-        response = requests.get(api_query, headers=token_header)
+        if datetime.datetime.now().timestamp() - token["token_timer"] >= 86400:
+            token["token_timer"] = get_token(credentials)
+        response = requests.get(api_query, headers=token["token_header"])
         response.raise_for_status()
         data = response.json()
         return pd.DataFrame(data)
