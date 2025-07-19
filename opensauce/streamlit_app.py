@@ -220,23 +220,26 @@ grid_size = (26,26)
 st_autorefresh(interval=10_000, key="api_refresh")
 
 df = get_api_data()
-df['payload'] = df['payload'].apply(lambda x: literal_eval(x))
-df = pd.concat([df, df['payload'].apply(pd.Series)], axis=1)
-df = df.drop(columns=['payload'])
-df['createdAt'] = pd.to_datetime(df['createdAt'], format='ISO8601')
-df = df.sort_values(by="createdAt")
+if df.empty:
+    st.warning("No data returned from API.")
+else:
+    df['payload'] = df['payload'].apply(lambda x: literal_eval(x))
+    df = pd.concat([df, df['payload'].apply(pd.Series)], axis=1)
+    df = df.drop(columns=['payload'])
+    df['createdAt'] = pd.to_datetime(df['createdAt'], format='ISO8601')
+    df = df.sort_values(by="createdAt")
 
-alert_df = df.loc[df['eventType']== 'alert',].copy()
-# print(alert_df['Payload'].head())
-alert_df['color_coordinates'] = alert_df['Payload'].str.split('|').apply(lambda x: [x[0], x[1], int(x[2])])
+    alert_df = df.loc[df['eventType']== 'alert',].copy()
+    # print(alert_df['Payload'].head())
+    alert_df['color_coordinates'] = alert_df['Payload'].str.split('|').apply(lambda x: [x[0], x[1], int(x[2])])
 
-color_cells.extend(alert_df['color_coordinates'].to_list())
+    color_cells.extend(alert_df['color_coordinates'].to_list())
 
-sensor_data = df.loc[df['eventType'] == 'bmp180', ].copy()
-parsed_df = sensor_data['Payload'].apply(parse_payload).apply(pd.Series)
-sensor_data = pd.concat([sensor_data.drop(columns=['Payload']), parsed_df], axis=1)
-sensor_data['date'] = sensor_data['createdAt'].dt.date
-sensor_data['time'] = sensor_data['createdAt'].dt.time
+    sensor_data = df.loc[df['eventType'] == 'bmp180', ].copy()
+    parsed_df = sensor_data['Payload'].apply(parse_payload).apply(pd.Series)
+    sensor_data = pd.concat([sensor_data.drop(columns=['Payload']), parsed_df], axis=1)
+    sensor_data['date'] = sensor_data['createdAt'].dt.date
+    sensor_data['time'] = sensor_data['createdAt'].dt.time
 
 # health_data = df.loc[df['eventType'] == 'health', ].copy()
 # parsed_df = health_data['Payload'].apply(parse_payload).apply(pd.Series)
@@ -250,36 +253,40 @@ sensor_data['time'] = sensor_data['createdAt'].dt.time
 tab1, tab2 = st.tabs(["Cluster Art", "🦆 Duck Management System"])
 with tab1:
 
-    if not df.empty:
-        # visualize_grid(grid_size, colored_cells)
-        fill_in_coordinate(color_cells)
-    else:
-        st.warning("No data returned from API.")
+    st.subheader("Cluster Art")
+    
+    # visualize_grid(grid_size, colored_cells)
+    fill_in_coordinate(color_cells)
 
 with tab2:
-    fig1, ax1 = plt.subplots(figsize=(10, 5), dpi=150)
-    ax1.plot(sensor_data['createdAt'], sensor_data['T'])
-    ax1.set_xlabel('Time (GMT)')
-    ax1.set_ylabel('Temperature (C)')
-    ax1.set_title('Temperature over Time')
-    ax1.tick_params(axis='x', rotation=45)
-    ax1.grid(True)
-    st.pyplot(fig1)
 
-    fig2, ax2 = plt.subplots(figsize=(10, 5), dpi=150)
-    ax2.plot(sensor_data['createdAt'], sensor_data['P'])
-    ax2.set_xlabel('Time (GMT)')
-    ax2.set_ylabel('Pressure (hPa)')
-    ax2.set_title('Pressure over Time')
-    ax2.tick_params(axis='x', rotation=45)
-    ax2.grid(True)
-    st.pyplot(fig2)
+    if not df.empty:
+        fig1, ax1 = plt.subplots(figsize=(10, 5), dpi=150)
+        ax1.plot(sensor_data['createdAt'], sensor_data['T'])
+        ax1.set_xlabel('Time (GMT)')
+        ax1.set_ylabel('Temperature (C)')
+        ax1.set_title('Temperature over Time')
+        ax1.tick_params(axis='x', rotation=45)
+        ax1.grid(True)
+        st.pyplot(fig1)
 
-    fig3, ax3 = plt.subplots(figsize=(10, 5), dpi=150)
-    ax3.plot(sensor_data['createdAt'], sensor_data['A']);
-    ax3.set_xlabel('Time (GMT)');
-    ax3.set_ylabel('Altitude (m)');
-    ax3.set_title('Altitude over Time');
-    ax3.tick_params(axis='x', rotation=45);
-    ax3.grid(True);
-    st.pyplot(fig3);
+        fig2, ax2 = plt.subplots(figsize=(10, 5), dpi=150)
+        ax2.plot(sensor_data['createdAt'], sensor_data['P'])
+        ax2.set_xlabel('Time (GMT)')
+        ax2.set_ylabel('Pressure (hPa)')
+        ax2.set_title('Pressure over Time')
+        ax2.tick_params(axis='x', rotation=45)
+        ax2.grid(True)
+        st.pyplot(fig2)
+
+        fig3, ax3 = plt.subplots(figsize=(10, 5), dpi=150)
+        ax3.plot(sensor_data['createdAt'], sensor_data['A']);
+        ax3.set_xlabel('Time (GMT)');
+        ax3.set_ylabel('Altitude (m)');
+        ax3.set_title('Altitude over Time');
+        ax3.tick_params(axis='x', rotation=45);
+        ax3.grid(True);
+        st.pyplot(fig3);
+
+    else:
+        st.warning("No data returned from API.")
