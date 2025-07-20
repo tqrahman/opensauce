@@ -238,6 +238,9 @@ else:
     sensor_data = pd.concat([sensor_data.drop(columns=['Payload']), parsed_df], axis=1)
     sensor_data['date'] = sensor_data['createdAt'].dt.date
     sensor_data['time'] = sensor_data['createdAt'].dt.time
+    sensor_data['T'] = sensor_data['T'].astype(float)
+    sensor_data['P'] = sensor_data['P'].astype(float)
+    sensor_data['A'] = sensor_data['A'].astype(float)
 
 # health_data = df.loc[df['eventType'] == 'health', ].copy()
 # parsed_df = health_data['Payload'].apply(parse_payload).apply(pd.Series)
