@@ -263,7 +263,7 @@ with tab2:
 
     if not df.empty:
         fig1, ax1 = plt.subplots(figsize=(10, 5), dpi=150)
-        ax1.plot(sensor_data['time'], sensor_data['T'])
+        ax1.plot(sensor_data['createdAt'], sensor_data['T'])
         ax1.set_xlabel('Time (GMT)')
         ax1.set_ylabel('Temperature (C)')
         ax1.set_title('Temperature over Time')
@@ -272,7 +272,7 @@ with tab2:
         st.pyplot(fig1)
 
         fig2, ax2 = plt.subplots(figsize=(10, 5), dpi=150)
-        ax2.plot(sensor_data['time'], sensor_data['P'])
+        ax2.plot(sensor_data['createdAt'], sensor_data['P'])
         ax2.set_xlabel('Time (GMT)')
         ax2.set_ylabel('Pressure (hPa)')
         ax2.set_title('Pressure over Time')
@@ -281,7 +281,7 @@ with tab2:
         st.pyplot(fig2)
 
         fig3, ax3 = plt.subplots(figsize=(10, 5), dpi=150)
-        ax3.plot(sensor_data['time'], sensor_data['A']);
+        ax3.plot(sensor_data['createdAt'], sensor_data['A']);
         ax3.set_xlabel('Time (GMT)');
         ax3.set_ylabel('Altitude (m)');
         ax3.set_title('Altitude over Time');
